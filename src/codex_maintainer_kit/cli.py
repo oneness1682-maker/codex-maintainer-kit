@@ -9,7 +9,7 @@ from rich.console import Console
 from rich.markdown import Markdown
 
 from . import __version__
-from .core import read_input, render_codex_task, render_issue, render_pr, render_release
+from .workflows import read_input, render_codex_task, render_issue, render_pr, render_release
 
 app = typer.Typer(
     help="Turn issues, PR diffs, and git history into Codex-ready maintainer workflows.",

@@ -9,7 +9,7 @@ description = "Turn issues, PR diffs, and git history into Codex-ready maintaine
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
-authors = [{ name = "OURS HUB / Watchman" }]
+authors = [{ name = "Codex Maintainer Kit contributors" }]
 keywords = ["codex", "open-source", "maintainer", "issue-triage", "pr-review", "release-notes", "cli"]
 classifiers = [
   "Development Status :: 3 - Alpha",
