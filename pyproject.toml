@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "codex-maintainer-kit"
-version = "0.1.0"
+version = "0.1.1"
 description = "Turn issues, PR diffs, and git history into Codex-ready maintainer workflows."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [{ name = "Codex Maintainer Kit contributors" }]
-keywords = ["codex", "open-source", "maintainer", "issue-triage", "pr-review", "release-notes", "cli"]
+keywords = ["codex", "open-source", "maintainer", "issue-triage", "pr-review", "release-notes", "visual-qa", "cli"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Console",

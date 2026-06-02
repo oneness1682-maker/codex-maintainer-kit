@@ -14,5 +14,6 @@ from .workflows import (  # noqa: F401
     render_issue,
     render_pr,
     render_release,
+    render_visual,
     summarize_diff,
 )

@@ -47,6 +47,26 @@ Output includes:
 - initial risk estimate
 - review checklist
 - Codex review prompt
+- visual QA checklist when UI/component files are changed
+
+### `cmtk visual [PATH]`
+
+Purpose: turn a screenshot-driven visual/layout bug report into a scoped repair brief.
+
+Example:
+
+```bash
+cmtk visual examples/visual-bug.md
+```
+
+Output includes:
+
+- visual bug goal
+- context excerpt
+- likely component/CSS/media inspection targets
+- screenshot QA checklist
+- browser verification steps
+- Codex implementation guardrails
 
 ### `cmtk release [PATH]`
 

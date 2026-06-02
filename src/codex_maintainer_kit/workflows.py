@@ -34,8 +34,50 @@ def bulletize(items: Iterable[str]) -> str:
     return "\n".join(f"- {item}" for item in items)
 
 
+VISUAL_BUG_TOKENS = (
+    "visual bug",
+    "layout broken",
+    "broken layout",
+    "overflow",
+    "clipped",
+    "clipping",
+    "protrude",
+    "protrudes",
+    "screenshot",
+    "mobile layout",
+    "desktop layout",
+    "responsive",
+    "widget",
+)
+
+UI_FILE_PATTERNS = (
+    ".css",
+    ".scss",
+    ".sass",
+    ".tsx",
+    ".jsx",
+    "components/",
+    "app/",
+    "pages/",
+)
+
+
+def looks_like_visual_bug(text: str) -> bool:
+    lowered = text.lower()
+    return any(token in lowered for token in VISUAL_BUG_TOKENS)
+
+
+def touches_ui_files(files: Iterable[str]) -> bool:
+    return any(
+        file.endswith(UI_FILE_PATTERNS) or file.startswith(UI_FILE_PATTERNS)
+        for file in files
+    )
+
+
 def detect_issue_type(text: str) -> str:
     lowered = text.lower()
+    if looks_like_visual_bug(text):
+        return "visual bug"
     if any(token in lowered for token in ["traceback", "error", "bug", "crash", "regression", "fail"]):
         return "bug"
     if any(token in lowered for token in ["docs", "readme", "documentation"]):
@@ -109,6 +151,14 @@ def render_pr(diff: str) -> str:
     additions, deletions, files = summarize_diff(diff)
     file_lines = bulletize(files) if files else "- No changed files detected from unified diff headers"
     risk = "high" if any(f.startswith(("auth", "security", "api", "src/auth")) for f in files) else "medium" if additions + deletions > 250 else "low"
+    visual_section = """
+
+## Visual QA checklist
+- [ ] Mobile and desktop visual check completed
+- [ ] Overflow/clipping verified
+- [ ] No unrelated layout shift observed
+- [ ] Before/after screenshot or browser check captured
+""" if touches_ui_files(files) else ""
     return f"""# PR review brief
 
 ## Diff summary
@@ -126,6 +176,7 @@ def render_pr(diff: str) -> str:
 - [ ] Are security-sensitive paths affected?
 - [ ] Are errors handled clearly?
 - [ ] Are docs or examples needed?
+{visual_section}
 
 ## Codex review prompt
 Review this diff as an open-source maintainer. Focus on correctness, tests, regressions, security-sensitive behavior, and whether the implementation is smaller than the problem requires. Return blocking issues first, then non-blocking suggestions.
@@ -182,4 +233,40 @@ Prepare a safe {mode} workflow for: {title}
 ```bash
 codex exec --sandbox workspace-write --ask-for-approval on-request "$(cat codex-task.md)"
 ```
+"""
+
+
+def render_visual(text: str) -> str:
+    title = first_nonempty_line(text, "Visual issue")
+    return f"""# Visual bug brief: {title}
+
+## Goal
+Fix the reported visual issue with the smallest safe UI/layout change.
+
+## Context
+{text.strip()[:2000]}
+
+## Likely inspection targets
+- Component or template that renders the affected surface
+- CSS/Tailwind classes controlling size, overflow, position, z-index, and breakpoints
+- Any embedded media/canvas/iframe/SVG that may escape its container
+
+## Screenshot QA checklist
+- [ ] Confirm expected visual state from the report or design intent
+- [ ] Compare before/after screenshots
+- [ ] Check mobile and desktop breakpoints
+- [ ] Verify overflow, clipping, z-index, and sticky/fixed positioning
+- [ ] Confirm no unrelated layout shift on nearby content
+
+## Browser verification
+- Open the exact URL or route where the screenshot was taken
+- Inspect the affected element's bounding rectangle and computed overflow/position styles
+- Re-check after deploy or cache-busted production load if this is a live-site fix
+
+## Codex implementation guardrails
+1. Inspect the relevant UI files before editing.
+2. Prefer the smallest visual containment/layout fix.
+3. Do not change APIs, credentials, business copy, or unrelated data flows.
+4. Run the project's typecheck/build and any UI/source-contract checks.
+5. Report changed files, commands run, and visual verification evidence.
 """

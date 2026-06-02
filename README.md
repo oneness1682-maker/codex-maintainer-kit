@@ -36,6 +36,7 @@ python -m pip install -e '.[dev]'
 ```bash
 cmtk issue examples/issue-input.md
 cmtk pr examples/pr-diff.patch
+cmtk visual examples/visual-bug.md
 cmtk release examples/release-log.txt
 cmtk codex-task examples/issue-input.md --mode implementation
 ```
@@ -44,6 +45,7 @@ All commands also accept stdin:
 
 ```bash
 git diff main...HEAD | cmtk pr -
+printf '%s\n' 'Screenshot shows a clipped mobile widget' | cmtk visual -
 git log --oneline v0.1.0..HEAD | cmtk release -
 ```
 
@@ -67,6 +69,18 @@ Reads a unified diff and creates:
 - risk estimate
 - review checklist
 - Codex review prompt
+
+For UI/component diffs, it also adds a visual QA checklist for mobile/desktop checks, overflow/clipping, screenshots, and unrelated layout shifts.
+
+### `cmtk visual`
+
+Turns a screenshot/layout bug report into a Codex-ready visual repair brief:
+
+- expected vs actual visual state
+- likely component/CSS/media inspection targets
+- screenshot QA checklist
+- browser verification steps
+- guardrails for keeping the fix scoped to UI/layout
 
 ### `cmtk release`
 
@@ -128,6 +142,7 @@ ruff check src tests
 - JSON schema output for automation
 - Optional OpenAI/Codex SDK integration
 - Release-note grouping by conventional commits
+- Deeper visual/layout bug workflows for screenshot-driven UI fixes
 
 ## License
 

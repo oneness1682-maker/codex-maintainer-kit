@@ -9,11 +9,19 @@ from rich.console import Console
 from rich.markdown import Markdown
 
 from . import __version__
-from .workflows import read_input, render_codex_task, render_issue, render_pr, render_release
+from .workflows import (
+    read_input,
+    render_codex_task,
+    render_issue,
+    render_pr,
+    render_release,
+    render_visual,
+)
 
 app = typer.Typer(
     help="Turn issues, PR diffs, and git history into Codex-ready maintainer workflows.",
     no_args_is_help=True,
+    invoke_without_command=True,
 )
 console = Console()
 
@@ -43,7 +51,7 @@ def emit(markdown: str, fmt: OutputFormat) -> None:
 
 @app.callback()
 def main(
-    version: bool = typer.Option(False, "--version", help="Show version and exit."),
+    version: bool = typer.Option(False, "--version", help="Show version and exit.", is_eager=True),
 ) -> None:
     if version:
         console.print(f"codex-maintainer-kit {__version__}")
@@ -66,6 +74,15 @@ def pr(
 ) -> None:
     """Summarize a PR diff into review risks and a Codex review prompt."""
     emit(render_pr(read_input(path)), format)
+
+
+@app.command()
+def visual(
+    path: Optional[str] = typer.Argument(None, help="Visual bug report path, or '-' / omitted for stdin."),
+    format: OutputFormat = typer.Option(OutputFormat.markdown, "--format", "-f"),
+) -> None:
+    """Prepare a screenshot/layout bug brief with browser verification steps."""
+    emit(render_visual(read_input(path)), format)
 
 
 @app.command("release")

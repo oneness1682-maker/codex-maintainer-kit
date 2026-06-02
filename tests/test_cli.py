@@ -29,6 +29,17 @@ def test_codex_task_command_json() -> None:
     assert "Codex task brief" in result.output
 
 
+def test_visual_command_stdin() -> None:
+    result = runner.invoke(
+        app,
+        ["visual", "-"],
+        input="# Widget overflow\nScreenshot shows a broken mobile layout.",
+    )
+    assert result.exit_code == 0
+    assert "Visual bug brief" in result.output
+    assert "Screenshot QA checklist" in result.output
+
+
 def test_issue_command_stdin_raw_markdown() -> None:
     result = runner.invoke(app, ["issue", "-"], input="# Bug: stdin crash\nTraceback")
     assert result.exit_code == 0
@@ -44,3 +55,10 @@ def test_invalid_format_rejected() -> None:
 def test_invalid_mode_rejected() -> None:
     result = runner.invoke(app, ["codex-task", "examples/issue-input.md", "--mode", "unsafe"])
     assert result.exit_code != 0
+
+
+def test_version_option_exits_without_command() -> None:
+    result = runner.invoke(app, ["--version"])
+    assert result.exit_code == 0
+    assert "codex-maintainer-kit" in result.output
+    assert "0.1.1" in result.output
