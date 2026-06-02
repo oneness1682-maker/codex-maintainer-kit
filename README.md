@@ -106,7 +106,7 @@ This project is intentionally aligned with maintainer workflows: issue triage, p
 Suggested application summary, under 500 characters:
 
 ```text
-Codex Maintainer Kit helps open-source maintainers convert issues, PR diffs, and git history into structured Codex-ready task briefs, review checklists, and release notes. It supports issue triage, PR review, release workflows, and maintainer automation without requiring secrets or paid APIs by default. The project itself is built with an AI-assisted multi-agent workflow and released under MIT.
+Codex Maintainer Kit is a small MIT-licensed CLI that helps open-source maintainers turn common repository inputs—issues, PR diffs, and git history—into structured, Codex-ready workflows. It focuses on practical maintainer tasks: issue triage, PR review briefs, release-note drafts, and bounded implementation prompts. The project is a good fit because it directly improves how maintainers prepare work for Codex while keeping humans in control of review, edits, and merge decisions.
 ```
 
 ## Development
